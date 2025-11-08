@@ -36,30 +36,30 @@ struct LidarConfig
 struct Point3D
 {
   float x, y, z;
-  
-  Point3D(float x_val, float y_val, float z_val) 
-    : x(x_val), y(y_val), z(z_val) {}
-  
-  bool operator==(const Point3D& other) const 
+
+  Point3D(float x_val, float y_val, float z_val)
+  : x(x_val), y(y_val), z(z_val) {}
+
+  bool operator==(const Point3D & other) const
   {
-    return std::abs(x - other.x) < 1e-6 && 
-           std::abs(y - other.y) < 1e-6 && 
+    return std::abs(x - other.x) < 1e-6 &&
+           std::abs(y - other.y) < 1e-6 &&
            std::abs(z - other.z) < 1e-6;
   }
 };
 
 struct Point3DHash
 {
-  std::size_t operator()(const Point3D& p) const 
+  std::size_t operator()(const Point3D & p) const
   {
     // Round to 3 decimal places for hashing
     int x_int = static_cast<int>(std::round(p.x * 1000));
     int y_int = static_cast<int>(std::round(p.y * 1000));
     int z_int = static_cast<int>(std::round(p.z * 1000));
-    
+
     return std::hash<long long>{}(
-      (static_cast<long long>(x_int) << 32) | 
-      (static_cast<long long>(y_int) << 16) | 
+      (static_cast<long long>(x_int) << 32) |
+      (static_cast<long long>(y_int) << 16) |
       static_cast<long long>(z_int)
     );
   }
@@ -68,9 +68,9 @@ struct Point3DHash
 class PointCloudAggregator
 {
 public:
-  explicit PointCloudAggregator(const LidarConfig& config);
-  
-  void addPoints(const std::vector<Point3D>& new_points);
+  explicit PointCloudAggregator(const LidarConfig & config);
+
+  void addPoints(const std::vector<Point3D> & new_points);
   std::vector<Point3D> getPointsCopy() const;
   bool hasChanges() const;
   void markSaved();
@@ -94,13 +94,13 @@ private:
   void setupSubscriptions();
   void setupPublishers();
   void lidarCallback(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
-  void publishAggregatedPointcloud(const std_msgs::msg::Header& header);
+  void publishAggregatedPointcloud(const std_msgs::msg::Header & header);
   void saveMapCallback();
   void logConfiguration();
 
   LidarConfig config_;
   std::unique_ptr<PointCloudAggregator> aggregator_;
-  
+
   std::vector<rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr> subscriptions_;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_pub_;
   rclcpp::TimerBase::SharedPtr save_timer_;

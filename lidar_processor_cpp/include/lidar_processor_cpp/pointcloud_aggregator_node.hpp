@@ -33,9 +33,9 @@ class StatisticalFilter
 {
 public:
   StatisticalFilter(int k_neighbors = 20, double std_ratio = 2.0);
-  
+
   pcl::PointCloud<pcl::PointXYZ>::Ptr filterPoints(
-    const pcl::PointCloud<pcl::PointXYZ>::Ptr& input_cloud);
+    const pcl::PointCloud<pcl::PointXYZ>::Ptr & input_cloud);
 
 private:
   int k_neighbors_;
@@ -55,17 +55,17 @@ private:
   void setupPublishers();
   void pointcloudCallback(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
   pcl::PointCloud<pcl::PointXYZ>::Ptr applyFilters(
-    const pcl::PointCloud<pcl::PointXYZ>::Ptr& input_cloud);
+    const pcl::PointCloud<pcl::PointXYZ>::Ptr & input_cloud);
   void publishCallback();
   void logConfiguration();
 
   AggregatorConfig config_;
   std::unique_ptr<StatisticalFilter> statistical_filter_;
-  
+
   std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> aggregated_clouds_;
   std::chrono::steady_clock::time_point last_publish_time_;
   mutable std::mutex clouds_mutex_;
-  
+
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr subscription_;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr filtered_pub_;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr downsampled_pub_;
