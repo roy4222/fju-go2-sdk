@@ -16,6 +16,8 @@ from rcl_interfaces.msg import SetParametersResult
 from tf2_ros import TransformBroadcaster
 
 from geometry_msgs.msg import Twist, PoseStamped
+
+# Hook 測試：修改 src/ 下的檔案，應該會觸發 flake8 檢查
 from go2_interfaces.msg import Go2State, IMU
 from go2_interfaces.msg import LowState, VoxelMapCompressed, WebRtcReq
 from sensor_msgs.msg import PointCloud2, JointState, Joy, Image, CameraInfo
@@ -201,7 +203,7 @@ class Go2DriverNode(Node):
         
         if self.config.conn_mode == 'single':
             self.create_subscription(
-                Twist, 'cmd_vel_out',
+                Twist, 'cmd_vel',
                 lambda msg: self._on_cmd_vel(msg, "0"), qos_profile)
             self.create_subscription(
                 WebRtcReq, 'webrtc_req',
@@ -209,7 +211,7 @@ class Go2DriverNode(Node):
         else:
             for i in range(num_robots):
                 self.create_subscription(
-                    Twist, f'robot{i}/cmd_vel_out',
+                    Twist, f'robot{i}/cmd_vel',
                     lambda msg, robot_id=str(i): self._on_cmd_vel(msg, robot_id), qos_profile)
                 self.create_subscription(
                     WebRtcReq, f'robot{i}/webrtc_req',
@@ -260,8 +262,9 @@ class Go2DriverNode(Node):
 
     def _on_cmd_vel(self, msg: Twist, robot_id: str) -> None:
         """Callback for movement commands"""
+        self.get_logger().info(f"_on_cmd_vel called: x={msg.linear.x}, y={msg.linear.y}, z={msg.angular.z}, robot_id={robot_id}")
         self.robot_control_service.handle_cmd_vel(
-            msg.linear.x, msg.linear.y, msg.angular.z, 
+            msg.linear.x, msg.linear.y, msg.angular.z,
             robot_id, self.config.obstacle_avoidance
         )
 

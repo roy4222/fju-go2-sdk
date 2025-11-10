@@ -116,7 +116,7 @@ def generate_launch_description():
                     "qos_overrides": {
                         "/camera/image_raw": {
                             "publisher": {
-                                "reliability": "reliable",
+                                "reliability": "best_effort",
                                 "history": "keep_last",
                                 "depth": 1,
                             }
